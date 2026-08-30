@@ -23,5 +23,9 @@
     "sharp": "^0.35.4",
     "tailwindcss": "^3.4.10",
     "typescript": "^5.5.4"
+  },
+  "optionalDependencies": {
+    "@next/swc-linux-x64-gnu": "14.2.35",
+    "@next/swc-linux-x64-musl": "14.2.35"
   }
 }
