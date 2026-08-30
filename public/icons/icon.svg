@@ -1,0 +1,27 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5"/>
+      <stop offset="100%" style="stop-color:#6366F1"/>
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="url(#bgGradient)"/>
+  <!-- Chick body (yellow circle) -->
+  <circle cx="256" cy="280" r="140" fill="#FCD34D"/>
+  <!-- Chick head (smaller circle on top) -->
+  <circle cx="256" cy="180" r="100" fill="#FCD34D"/>
+  <!-- Eyes -->
+  <circle cx="220" cy="165" r="18" fill="#1E293B"/>
+  <circle cx="292" cy="165" r="18" fill="#1E293B"/>
+  <!-- Eye highlights -->
+  <circle cx="215" cy="160" r="5" fill="white"/>
+  <circle cx="287" cy="160" r="5" fill="white"/>
+  <!-- Beak -->
+  <ellipse cx="256" cy="200" rx="18" ry="12" fill="#FB923C"/>
+  <!-- Bottom egg shell cracks -->
+  <path d="M120 380 Q160 360 200 380 Q240 400 280 380 Q320 360 360 380 Q400 400 440 380" stroke="#EAB308" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M100 400 Q140 385 180 400 Q220 415 260 400 Q300 385 340 400 Q380 415 420 400" stroke="#EAB308" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <!-- Piggy bank slot on head -->
+  <rect x="236" y="110" width="40" height="6" rx="3" fill="#1E293B" opacity="0.3"/>
+</svg>

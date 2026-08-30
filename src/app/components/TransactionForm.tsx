@@ -2,6 +2,33 @@
 
 import { useRef, useState, useTransition } from "react";
 
+const accentConfig: Record<string, { button: string; iconBg: string; focusRing: string; shadow: string }> = {
+  indigo: {
+    button: "bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/20",
+    iconBg: "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600",
+    focusRing: "focus:ring-2 focus:ring-indigo-500",
+    shadow: "shadow-indigo-600/20",
+  },
+  sky: {
+    button: "bg-sky-500 hover:bg-sky-600 shadow-lg shadow-sky-500/20",
+    iconBg: "bg-sky-100 dark:bg-sky-900/30 text-sky-600",
+    focusRing: "focus:ring-2 focus:ring-sky-500",
+    shadow: "shadow-sky-500/20",
+  },
+  rose: {
+    button: "bg-rose-500 hover:bg-rose-600 shadow-lg shadow-rose-500/20",
+    iconBg: "bg-rose-100 dark:bg-rose-900/30 text-rose-600",
+    focusRing: "focus:ring-2 focus:ring-rose-500",
+    shadow: "shadow-rose-500/20",
+  },
+};
+
+const currencySymbols: Record<string, string> = {
+  MXN: "$",
+  EUR: "€",
+  UAH: "₴",
+};
+
 export default function TransactionForm({
   action,
   title,
@@ -20,17 +47,8 @@ export default function TransactionForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const buttonColors: Record<string, string> = {
-    indigo: "bg-indigo-600 hover:bg-indigo-500 text-white",
-    sky: "bg-sky-600 hover:bg-sky-500 text-white",
-    rose: "bg-rose-600 hover:bg-rose-500 text-white",
-  };
-
-  const iconBg: Record<string, string> = {
-    indigo: "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-500",
-    sky: "bg-sky-50 dark:bg-sky-500/10 text-sky-500",
-    rose: "bg-rose-50 dark:bg-rose-500/10 text-rose-500",
-  };
+  const config = accentConfig[accent];
+  const currencySymbol = currencySymbols[currencyLabel] || currencyLabel;
 
   function handleSubmit(formData: FormData) {
     setError(null);
@@ -52,42 +70,36 @@ export default function TransactionForm({
   }
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
-      <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-3 ${iconBg[accent]}`}>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 5v14M5 12h14" />
-        </svg>
-      </div>
-      <h3 className="font-medium text-sm text-slate-900 dark:text-white">{title}</h3>
-      <p className="text-slate-500 dark:text-slate-400 text-xs mb-3">{description}</p>
-      <form ref={formRef} action={handleSubmit} className="space-y-2">
+    <form ref={formRef} action={handleSubmit} className="space-y-4">
+      <div className="relative">
         <input
           type="number"
           name="amount"
           step="0.01"
           min="0.01"
-          placeholder={`Monto en ${currencyLabel}`}
+          placeholder="0.00"
           required
-          className="w-full rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm outline-none text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-indigo-400 transition-colors"
+          className={`w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none transition-all pr-12 text-slate-900 dark:text-white placeholder:text-slate-400 ${config.focusRing}`}
         />
-        <input
-          type="text"
-          name="note"
-          placeholder="Nota (opcional)"
-          className="w-full rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm outline-none text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-indigo-400 transition-colors"
-        />
-        <button
-          type="submit"
-          disabled={isPending}
-          className={`w-full rounded-lg py-2 text-sm font-medium transition-colors disabled:opacity-60 ${buttonColors[accent]}`}
-        >
-          {isPending ? "Guardando..." : "Agregar"}
-        </button>
-        {error && <p className="text-rose-500 text-xs">{error}</p>}
-        {success && !error && (
-          <p className="text-indigo-500 text-xs">Movimiento guardado.</p>
-        )}
-      </form>
-    </div>
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">{currencySymbol}</span>
+      </div>
+      <input
+        type="text"
+        name="note"
+        placeholder="Nota (opcional)"
+        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500"
+      />
+      <button
+        type="submit"
+        disabled={isPending}
+        className={`w-full py-3 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${config.button} ${isPending ? "opacity-70 cursor-wait" : ""}`}
+      >
+        {isPending ? "Guardando..." : accent === "indigo" ? "Confirmar Aporte" : accent === "sky" ? "Registrar Pago" : "Registrar Gasto"}
+      </button>
+      {error && <p className="text-rose-500 text-sm text-center">{error}</p>}
+      {success && !error && (
+        <p className="text-emerald-500 text-sm text-center">Movimiento guardado.</p>
+      )}
+    </form>
   );
 }
