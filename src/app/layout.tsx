@@ -58,6 +58,7 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: noFlashScript }} />
+        <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" defer />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
