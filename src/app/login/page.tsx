@@ -7,7 +7,7 @@ import ThemeToggle from "@/app/components/ThemeToggle";
 export default function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: { error?: string };
 }) {
   const [hasError, setHasError] = useState(false);
   const [pin, setPin] = useState("");
@@ -15,13 +15,11 @@ export default function LoginPage({
   const [shake, setShake] = useState(false);
 
   useEffect(() => {
-    searchParams.then((params) => {
-      if (params?.error === "1") {
-        setHasError(true);
-        setShake(true);
-        setTimeout(() => setShake(false), 400);
-      }
-    });
+    if (searchParams?.error === "1") {
+      setHasError(true);
+      setShake(true);
+      setTimeout(() => setShake(false), 400);
+    }
   }, [searchParams]);
 
   const handlePinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
