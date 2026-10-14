@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 const accentConfig: Record<string, { button: string; iconBg: string; focusRing: string; shadow: string }> = {
   indigo: {
@@ -29,26 +30,36 @@ const currencySymbols: Record<string, string> = {
   UAH: "₴",
 };
 
+const currencyNames: Record<string, string> = {
+  MXN: "MXN - Peso Mexicano",
+  EUR: "EUR - Euro",
+  UAH: "UAH - Grivna Ucraniana",
+};
+
 export default function TransactionForm({
   action,
   title,
   description,
-  currencyLabel,
+  defaultCurrency,
+  availableCurrencies,
   accent,
 }: {
   action: (formData: FormData) => Promise<void>;
   title: string;
   description: string;
-  currencyLabel: string;
+  defaultCurrency: string;
+  availableCurrencies: string[];
   accent: "indigo" | "sky" | "rose";
 }) {
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState(defaultCurrency);
 
   const config = accentConfig[accent];
-  const currencySymbol = currencySymbols[currencyLabel] || currencyLabel;
+  const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
 
   function handleSubmit(formData: FormData) {
     setError(null);
@@ -63,14 +74,33 @@ export default function TransactionForm({
         await action(formData);
         formRef.current?.reset();
         setSuccess(true);
+        router.refresh();
       } catch (e) {
         setError(e instanceof Error ? e.message : "Ocurrió un error.");
       }
     });
   }
 
+  function handleCurrencyChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    setSelectedCurrency(e.target.value);
+  }
+
   return (
     <form ref={formRef} action={handleSubmit} className="space-y-4">
+      <div className="relative">
+        <select
+          name="currency"
+          value={selectedCurrency}
+          onChange={handleCurrencyChange}
+          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none transition-all text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 appearance-none cursor-pointer"
+        >
+          {availableCurrencies.map((curr) => (
+            <option key={curr} value={curr}>
+              {currencyNames[curr] || curr}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="relative">
         <input
           type="number"

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { deleteTransaction } from "@/app/actions/transactions";
 import { formatEUR, formatOriginal } from "@/lib/utils";
 import { TYPE_LABELS, TYPE_ICONS, TYPE_COLORS } from "@/lib/types";
@@ -11,7 +12,7 @@ interface TransactionListProps {
   initialBalance: number;
 }
 
-function TransactionRow({ transaction }: { transaction: TransactionDoc }) {
+function TransactionRow({ transaction, onDelete }: { transaction: TransactionDoc; onDelete: (id: string) => void }) {
   const config = TYPE_COLORS[transaction.type];
   const icon = TYPE_ICONS[transaction.type];
   const label = TYPE_LABELS[transaction.type];
@@ -46,28 +47,33 @@ function TransactionRow({ transaction }: { transaction: TransactionDoc }) {
         </span>
       </td>
       <td className="px-6 py-4 text-center">
-        <form action={deleteTransaction}>
-          <input type="hidden" name="id" value={transaction._id?.toString()} />
-          <button
-            type="submit"
-            className="text-slate-400 hover:text-rose-500 transition-colors p-1"
-            title="Eliminar"
-            aria-label="Eliminar transacción"
-          >
-            <iconify-icon icon="lucide:trash-2" className="text-xl" />
-          </button>
-        </form>
+        <button
+          type="button"
+          onClick={() => onDelete(transaction._id?.toString()!)}
+          className="text-slate-400 hover:text-rose-500 transition-colors p-1"
+          title="Eliminar"
+          aria-label="Eliminar transacción"
+        >
+          <iconify-icon icon="lucide:trash-2" className="text-xl" />
+        </button>
       </td>
     </tr>
   );
 }
 
-export default function TransactionList({ transactions, initialBalance }: TransactionListProps) {
-  const [localTransactions, setLocalTransactions] = useState(transactions);
+export default function TransactionList({ transactions: initialTransactions }: TransactionListProps) {
+  const router = useRouter();
+  const [transactions, setTransactions] = useState(initialTransactions);
+  const [isDeleting, startDeleteTransition] = useTransition();
 
-  const handleDelete = (id: string) => {
-    setLocalTransactions(prev => prev.filter(t => t._id?.toString() !== id));
-  };
+  function handleDelete(id: string) {
+    startDeleteTransition(async () => {
+      const formData = new FormData();
+      formData.append("id", id);
+      await deleteTransaction(formData);
+      router.refresh();
+    });
+  }
 
   return (
     <section className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
@@ -92,15 +98,15 @@ export default function TransactionList({ transactions, initialBalance }: Transa
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {localTransactions.length === 0 ? (
+              {transactions.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
                     <p className="text-slate-400 dark:text-slate-500 text-sm">Todavía no hay movimientos registrados.</p>
                   </td>
                 </tr>
               ) : (
-                localTransactions.map((d) => (
-                  <TransactionRow key={d._id?.toString()} transaction={d} />
+                transactions.map((d) => (
+                  <TransactionRow key={d._id?.toString()} transaction={d} onDelete={handleDelete} />
                 ))
               )}
             </tbody>

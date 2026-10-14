@@ -47,37 +47,40 @@ async function addTransaction(params: {
   revalidatePath("/");
 }
 
-export async function addContributionMXN(formData: FormData) {
+export async function addContribution(formData: FormData) {
   const amount = Number(formData.get("amount"));
+  const currency = String(formData.get("currency") ?? "MXN");
   const note = String(formData.get("note") ?? "");
   await addTransaction({
     type: "contribution_mxn",
     amountOriginal: amount,
-    currency: "MXN",
+    currency: currency as "MXN" | "EUR" | "UAH",
     sign: 1,
     note,
   });
 }
 
-export async function addStudentPaymentEUR(formData: FormData) {
+export async function addStudentPayment(formData: FormData) {
   const amount = Number(formData.get("amount"));
+  const currency = String(formData.get("currency") ?? "EUR");
   const note = String(formData.get("note") ?? "");
   await addTransaction({
     type: "student_payment_eur",
     amountOriginal: amount,
-    currency: "EUR",
+    currency: currency as "MXN" | "EUR" | "UAH",
     sign: 1,
     note,
   });
 }
 
-export async function addExpenseUAH(formData: FormData) {
+export async function addExpense(formData: FormData) {
   const amount = Number(formData.get("amount"));
+  const currency = String(formData.get("currency") ?? "UAH");
   const note = String(formData.get("note") ?? "");
   await addTransaction({
     type: "expense_uah",
     amountOriginal: amount,
-    currency: "UAH",
+    currency: currency as "MXN" | "EUR" | "UAH",
     sign: -1,
     note,
   });

@@ -3,9 +3,9 @@ import { isAuthenticated } from "@/lib/auth";
 import { getDb } from "@/lib/mongodb";
 import { logout } from "@/app/actions/auth";
 import {
-  addContributionMXN,
-  addStudentPaymentEUR,
-  addExpenseUAH,
+  addContribution,
+  addStudentPayment,
+  addExpense,
   deleteTransaction,
 } from "@/app/actions/transactions";
 import TransactionForm from "@/app/components/TransactionForm";
@@ -127,10 +127,11 @@ export default async function HomePage() {
             <h3 className="text-xl font-bold mb-1">Aporte de Carlos</h3>
             <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Añadir fondos en Pesos Mexicanos al fondo común.</p>
             <TransactionForm
-              action={addContributionMXN}
+              action={addContribution}
               title="Aporte de Carlos"
               description="Dinero que Carlos agrega en pesos mexicanos (MXN) para sus citas."
-              currencyLabel="MXN"
+              defaultCurrency="MXN"
+              availableCurrencies={["MXN", "EUR", "UAH"]}
               accent="indigo"
             />
           </div>
@@ -145,10 +146,11 @@ export default async function HomePage() {
             <h3 className="text-xl font-bold mb-1">Pago de estudiante</h3>
             <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Registro de mensualidades recibidas en Euros.</p>
             <TransactionForm
-              action={addStudentPaymentEUR}
+              action={addStudentPayment}
               title="Pago de estudiante"
               description="Dinero que llega en euros a la cuenta de Revolut."
-              currencyLabel="EUR"
+              defaultCurrency="EUR"
+              availableCurrencies={["MXN", "EUR", "UAH"]}
               accent="sky"
             />
           </div>
@@ -163,10 +165,11 @@ export default async function HomePage() {
             <h3 className="text-xl font-bold mb-1">Gasto</h3>
             <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Registrar egreso rápido en Grivnas Ucranianas.</p>
             <TransactionForm
-              action={addExpenseUAH}
+              action={addExpense}
               title="Gasto"
               description="Registra un gasto en grivnas (UAH); se descuenta del saldo."
-              currencyLabel="UAH"
+              defaultCurrency="UAH"
+              availableCurrencies={["MXN", "EUR", "UAH"]}
               accent="rose"
             />
           </div>
